@@ -1,0 +1,35 @@
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testImplementation 'org.assertj:assertj-core:3.19.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+}
+
+def report = tasks.named('jacocoTestReport')
+report.configure {
+	executionData tasks.withType(Test)
+	reports {
+		html.enabled = true
+	}
+}
+
+tasks.named('check').configure {
+	dependsOn report
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+}
+
+tasks.withType(Test).whenTaskAdded { test ->
+	report.configure {
+		dependsOn test
+	}
+}

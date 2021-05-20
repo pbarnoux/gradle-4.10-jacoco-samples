@@ -1,0 +1,4 @@
+apply from: 'parent.gradle'
+
+// uncomment to enable integration tests
+// apply from: 'integ-test.gradle'

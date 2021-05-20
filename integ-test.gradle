@@ -1,0 +1,32 @@
+apply plugin: 'java-library'
+
+sourceSets {
+	integTest {
+		java {
+			srcDirs = ['src/integTest/java']
+		}
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	integTestImplementation {
+		canBeResolved = false
+		canBeConsumed = false
+		extendsFrom testImplementation
+	}
+	integTestRuntimeOnly {
+		canBeResolved = false
+		canBeConsumed = false
+		extendsFrom testRuntimeOnly
+	}
+}
+
+tasks.register('integTest', Test) {
+	// since IT are usually slower than UT, verify UT first to fail-fast
+	shouldRunAfter tasks.named('test')
+	classpath = sourceSets.integTest.runtimeClasspath
+	testClassesDirs = sourceSets.integTest.output.classesDirs
+}
+
